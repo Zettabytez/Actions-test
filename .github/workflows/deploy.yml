@@ -1,0 +1,22 @@
+name: test
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy: 
+    runs-on: ubuntu-latest
+    steps:
+    
+      - name: Add ssh key
+        run: |
+          mkdir ~/.ssh
+          echo "${{ secrets.KEY }}" > ~/.ssh/key
+          chmod 600 ~/.ssh/key
+      - name: Deploy project
+        env:
+          options: ssh -i ~/.ssh/key -o StrictHostKeyChecking=no
+        run: |
+          rsync -e "$options" --archive --delete ./ zettabyte@158.160.87.221:/home/html
