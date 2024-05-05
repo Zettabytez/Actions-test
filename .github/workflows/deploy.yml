@@ -25,7 +25,9 @@ jobs:
           SSH_HOST: 158.160.5.48
 
       - name: Stop the server
-        run: ssh staging 'ls'
+        run: |
+          ssh -i ~/.ssh/key zettabyte@158.160.5.48
+          ssh staging 'ls'
 
       - name: Check out the source
         run: ssh staging 'ls -l /home'
