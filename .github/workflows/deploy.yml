@@ -1,37 +1,25 @@
 name: test
-on: push
-#  push:
-#    branches:
-#      - develop
+
+on:
+  push:
+    branches:
+      - develop
+
 jobs:
-  deploy:
-    name: "Deploy to staging"
+  deploy: 
     runs-on: ubuntu-latest
     steps:
-      - name: Configure SSH
+      - uses: actions/checkout@v3 
+      - name: Add ssh key
         run: |
-          mkdir -p ~/.ssh/
+          mkdir ~/.ssh
           echo "${{ secrets.KEY }}" > ~/.ssh/key
           chmod 600 ~/.ssh/key
-          ssh -i ~/.ssh/key zettabyte@158.160.5.48
-          cat >>~/.ssh/config <<END
-          Host staging
-            HostName $SSH_HOST
-            User $SSH_USER
-            IdentityFile ~/.ssh/key
-            StrictHostKeyChecking no
-          END
-        env:
-          SSH_USER: Zettabyte
-          SSH_HOST: 158.160.5.48
-
-      - name: Stop the server
-        run: |
-          ssh staging 'ls'
-
-      - name: Check out the source
-        run: ssh staging 'ls -l /home'
-
-      - name: Start the server
-#        if: ${{ always() }}
-        run: ssh staging 'cd /home'
+      - name: update files
+        env: 
+          options: ssh -i ~/.ssh/key -o StrictHostKeyChecking=no
+        run: rsync -e "$options" --archive -ac ./ zettabyte@158.160.5.48:/home/html
+      - name: run command
+        run: ssh -i ~/.ssh/key zettabyte@158.160.5.48 'ls'
+      - name: run another command
+        run: ssh -i ~/.ssh/key zettabyte@158.160.5.48 'cd /home/zettabyte/Regolith/cab* && npm install'
