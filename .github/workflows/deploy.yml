@@ -9,7 +9,9 @@ jobs:
   deploy: 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3 
+      - uses: actions/checkout@v3
+      - name: list of changed files
+        run: git diff-tree --no-commit-id --name-only -r ${{ github.sha }}
       - name: Add ssh key
         run: |
           mkdir ~/.ssh
