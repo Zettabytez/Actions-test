@@ -13,6 +13,7 @@ jobs:
           mkdir -p ~/.ssh/
           echo "${{ secrets.KEY }}" > ~/.ssh/key
           chmod 600 ~/.ssh/key
+          ssh -i ~/.ssh/key zettabyte@158.160.5.48
           cat >>~/.ssh/config <<END
           Host staging
             HostName $SSH_HOST
@@ -26,7 +27,6 @@ jobs:
 
       - name: Stop the server
         run: |
-          ssh -i ~/.ssh/key zettabyte@158.160.5.48
           ssh staging 'ls'
 
       - name: Check out the source
