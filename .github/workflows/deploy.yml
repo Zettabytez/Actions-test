@@ -31,5 +31,5 @@ jobs:
         run: ssh staging 'ls -l /home'
 
       - name: Start the server
-        if: ${{ always() }}
+#        if: ${{ always() }}
         run: ssh staging 'cd /home'
