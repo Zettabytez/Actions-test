@@ -19,4 +19,4 @@ jobs:
         env:
           options: ssh -i ~/.ssh/key -o StrictHostKeyChecking=no
         run: |
-          rsync -e "$options" --archive --delete ./ zettabyte@158.160.87.221:/home/html
+          rsync -e "$options" --archive --delete ./ zettabyte@158.160.5.48:/home/html
