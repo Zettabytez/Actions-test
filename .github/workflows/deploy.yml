@@ -1,22 +1,35 @@
 name: test
-
-on:
-  push:
-    branches:
-      - develop
-
+on: push
+#  push:
+#    branches:
+#      - develop
 jobs:
-  deploy: 
+  deploy:
+    name: "Deploy to staging"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3    
-      - name: Add ssh key
+      - name: Configure SSH
         run: |
-          mkdir ~/.ssh
+          mkdir -p ~/.ssh/
           echo "${{ secrets.KEY }}" > ~/.ssh/key
           chmod 600 ~/.ssh/key
-      - name: Deploy project
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/staging.key
+            StrictHostKeyChecking no
+          END
         env:
-          options: ssh -i ~/.ssh/key -o StrictHostKeyChecking=no
-        run: |
-          rsync -e "$options" --archive --delete ./ zettabyte@158.160.5.48:/home/html
+          SSH_USER: Zettabyte
+          SSH_HOST: 158.160.5.48
+
+      - name: Stop the server
+        run: ssh staging 'ls'
+
+      - name: Check out the source
+        run: ssh staging 'ls -l /home'
+
+      - name: Start the server
+        if: ${{ always() }}
+        run: ssh staging 'cd /home'
